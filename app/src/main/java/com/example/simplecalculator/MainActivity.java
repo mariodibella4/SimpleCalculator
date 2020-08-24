@@ -1,23 +1,26 @@
 package com.example.simplecalculator;
-import android.view.Window;
-import android.view.WindowManager;
-import net.objecthunter.exp4j.ExpressionBuilder;
+
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
+
+import javax.ejb.EJB;
+
 public class MainActivity extends AppCompatActivity {
     private TextView txtDisplay;
-    Controller controller=new Controller();
+    @EJB
+    private BackEndSimpleCalcRemote remote;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try
-        {
+        try {
             this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
+            e.getMessage();
         }
-        catch (NullPointerException e){}
         setContentView(R.layout.activity_main);
 
     }
@@ -40,14 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public void equalListener(View view){
         txtDisplay =findViewById(R.id.textViewOutput);
         String input=txtDisplay.getText().toString();
-        String inputUpdated= controller.replaceMultiplyAndDivideWithProperSymbols(input);
-            ExpressionBuilder expression = new ExpressionBuilder(inputUpdated);
-            try {
-                double result = expression.build().evaluate();
-                txtDisplay.setText(Double.toString(result));
-            } catch (ArithmeticException e) {
-                e.printStackTrace();
-            }
+        remote.getSolution(input);
        }
 
 
